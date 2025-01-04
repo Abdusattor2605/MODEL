@@ -6,7 +6,6 @@ import joblib
 from sklearn.preprocessing import LabelEncoder
 encoder = LabelEncoder()
 
-st.header("**XUSH KELIBSIZ!!!** \nBizning hizmatlarimizdan foydalanayotganizdan mamnunmiz!")
 
 st.sidebar.header("📊 Ilova Bo'limlari")
 menu = st.sidebar.radio(
@@ -15,6 +14,7 @@ menu = st.sidebar.radio(
 )
 
 if menu == "Bosh Sahifa":
+   st.header("**XUSH KELIBSIZ!!!** \nBizning hizmatlarimizdan foydalanayotganizdan mamnunmiz!")
    st.header("Bizning xizmatlarimiz")
    st.markdown("""
    - **Moliyaviy tahlil**: Mijozlarning moliyaviy ahvolini chuqur tahlil qilish.
@@ -24,6 +24,17 @@ if menu == "Bosh Sahifa":
    """)
 
 elif menu == "Kredit Tasdiqlash":
+   st.markdown(
+    f"""
+    <style>
+      .stApp {{
+        background-color: {'#002352'};
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True
+   )
+
    model = joblib.load("bank_model.pkl")
 
    st.header("Kredit Tasdiqlash")
@@ -34,7 +45,7 @@ elif menu == "Kredit Tasdiqlash":
    loan_amount = st.number_input("Kredit miqdori ($):", 1000, 500000, 20000)
    credit_score = st.number_input("Kredit reytingi:", 300, 850, 700)
 
-   if st.button("🔮 Aniqlash"):
+   if st.button("Aniqlash"):
       features = np.array([[age, income, loan_amount, credit_score]])
       prediction = model.predict(features)
       if prediction[0] == 1:
@@ -43,6 +54,16 @@ elif menu == "Kredit Tasdiqlash":
          st.error("❌ Kredit rad etildi.")
          
 elif menu == "Dori vositalari tavsiyasi":
+   st.markdown(
+    f"""
+    <style>
+      .stApp {{
+        background-color: {'#003A52'};
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True
+   )
    with open('Dori_Tavsiyasi.pkl', 'rb') as file:
       model = pickle.load(file)
 
@@ -75,10 +96,20 @@ elif menu == "Dori vositalari tavsiyasi":
          'Cholesterol': Cholesterol, 
          'Na_to_k': Na_to_k
       }])
-      prediction = model.predict(input_data)
-      st.success(f"Tavsiya etilgan dori ${prediction}")
+      prediction = model.predict(input_data)[0]
+      st.success(f"Tavsiya etilgan dori ${prediction}$")
       
 elif menu == "Avtomobil narxlash":
+   st.markdown(
+    f"""
+    <style>
+      .stApp {{
+        background-color: {'#004352'};
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True
+   )
    with open('avtonarx.pkl', 'rb') as file:
     model = pickle.load(file)
     
@@ -112,6 +143,16 @@ elif menu == "Avtomobil narxlash":
       st.success(f"{mm} mashinangizning taxminiy narxi: ${prediction:.2f}$ {"$"}")
       
 elif menu == "Kvartira narxlash":
+   st.markdown(
+    f"""
+    <style>
+      .stApp {{
+        background-color: {'#003152'};
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True
+   )
    with open('uynarx.pkl', 'rb') as f:
       model = pickle.load(f)
 
