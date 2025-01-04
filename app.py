@@ -114,8 +114,6 @@ elif menu == "Avtomobil narxlash":
     model = pickle.load(file)
     
    st.title("AVTO NARX")
-   st.write("Bu dastur sizning kiritgan ma'lumotlaringizga asoslanib avtomobilingizning taxminiy narxini bashorat qiladi!")
-
    mm = st.text_input("Mashina modeli")
    year = st.text_input("Ishlab chiqarilgan yili")
    sp = st.text_input("Sotib olingan narxi")
