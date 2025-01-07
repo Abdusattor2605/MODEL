@@ -6,7 +6,6 @@ import joblib
 from sklearn.preprocessing import LabelEncoder
 encoder = LabelEncoder()
 
-
 st.sidebar.header("📊 Ilova Bo'limlari")
 menu = st.sidebar.radio(
    "Menyu:",
@@ -49,9 +48,9 @@ elif menu == "Kredit Tasdiqlash":
       features = np.array([[age, income, loan_amount, credit_score]])
       prediction = model.predict(features)
       if prediction[0] == 1:
-         st.success("✅ Kredit tasdiqlandi!")
+         st.success("Kredit tasdiqlandi!")
       else:
-         st.error("❌ Kredit rad etildi.")
+         st.error("Kredit rad etildi.")
          
 elif menu == "Dori vositalari tavsiyasi":
    st.markdown(
@@ -114,29 +113,31 @@ elif menu == "Avtomobil narxlash":
     model = pickle.load(file)
     
    st.title("AVTO NARX")
+   st.write("Bu dastur sizning kiritgan ma'lumotlaringizga asoslanib avtomobilingizning taxminiy narxini bashorat qiladi!")
+
    mm = st.text_input("Mashina modeli")
    year = st.text_input("Ishlab chiqarilgan yili")
-   sp = st.text_input("Sotib olingan narxi")
+   sp = st.text_input("Dvigatel hajmi")
    dk = st.text_input("Yurgan yo'li probeg")
-   ftt = st.selectbox("Yoqilg'i turi", ["Benzin", "Dizel", "Gaz"])
+   ftt = st.selectbox("Yoqilg'i turi", ["Benzin","Gaz","Elektr"])
 
    if ftt=="Benzin":
       ft=2
-   elif ftt=="Dizel":
-      ft=1
    elif ftt=="Gaz":
       ft=0
-
+   elif ftt=="Elektr":
+      ft=1
+   
    if st.button("Bashorat qilish"):
       df =pd.DataFrame([{
-         'Year': year,
-         'Selling_Price': sp,
-         'Driven_kms': dk,
-         'Fuel_Type': ft
+         'year': year,
+         'mileage': dk,
+         'fuelType': ft,
+         'engineSize': sp
       }]) 
-      df['Year'] = encoder.fit_transform(df['Year'].values)
-      df['Selling_Price'] = encoder.fit_transform(df['Selling_Price'].values)
-      df['Driven_kms'] = encoder.fit_transform(df['Driven_kms'].values)
+      df['year'] = encoder.fit_transform(df['year'].values)
+      df['engineSize'] = encoder.fit_transform(df['engineSize'].values)
+      df['mileage'] = encoder.fit_transform(df['mileage'].values)
       prediction = model.predict(df)[0]
       st.success(f"{mm} mashinangizning taxminiy narxi: ${prediction:.2f}$ {"$"}")
       
@@ -157,7 +158,7 @@ elif menu == "Kvartira narxlash":
    st.title("Uy narxini bashorat qilish")
    bedrooms = st.number_input("Yotoqxonalar soni", min_value=1, step=1)
    bathrooms = st.number_input("Hammomlar soni", min_value=1.0, step=0.5)
-   sqft_living = st.number_input("Yashash maydoni (sqft)", min_value=500, step=50)
+   sqft_living = st.number_input("Yashash maydoni", min_value=500, step=50)
    floors = st.number_input("Qavatlar soni", min_value=1.0, step=0.5)
    yr_built = st.number_input("Qurilgan yili", min_value=1900, max_value=2023, step=1)
 
