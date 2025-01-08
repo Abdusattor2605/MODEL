@@ -9,7 +9,7 @@ encoder = LabelEncoder()
 st.sidebar.header("📊 Ilova Bo'limlari")
 menu = st.sidebar.radio(
    "Menyu:",
-   ["Bosh Sahifa", "Kredit Tasdiqlash", "Dori vositalari tavsiyasi", "Avtomobil narxlash", "Kvartira narxlash"]
+   ["Bosh Sahifa", "Kredit Tasdiqlash", "Dori vositalari tavsiyasi", "Avtomobil narxlash", "Noutbokni narxlash"]
 )
 
 if menu == "Bosh Sahifa":
@@ -39,10 +39,10 @@ elif menu == "Kredit Tasdiqlash":
    st.header("Kredit Tasdiqlash")
 
    st.markdown("Ma'lumotlaringizni kiriting:")
-   age = st.number_input("Yosh:", 18, 100, 25)
-   income = st.number_input("Yillik daromad ($):", 10000, 1000000, 50000)
-   loan_amount = st.number_input("Kredit miqdori ($):", 1000, 500000, 20000)
-   credit_score = st.number_input("Kredit reytingi:", 300, 850, 700)
+   age = st.number_input("Yosh:", step=1)
+   income = st.number_input("Yillik daromad ($):", step=1)
+   loan_amount = st.number_input("Kredit miqdori ($):", step=1)
+   credit_score = st.number_input("Kredit reytingi:", step=1)
 
    if st.button("Aniqlash"):
       features = np.array([[age, income, loan_amount, credit_score]])
@@ -116,9 +116,9 @@ elif menu == "Avtomobil narxlash":
    st.write("Bu dastur sizning kiritgan ma'lumotlaringizga asoslanib avtomobilingizning taxminiy narxini bashorat qiladi!")
 
    mm = st.text_input("Mashina modeli")
-   year = st.text_input("Ishlab chiqarilgan yili")
-   sp = st.text_input("Dvigatel hajmi")
-   dk = st.text_input("Yurgan yo'li probeg")
+   year = st.number_input("Ishlab chiqarilgan yili", step=1)
+   sp = st.number_input("Dvigatel hajmi", step=0.1)
+   dk = st.number_input("Yurgan yo'li probeg", step=1)
    ftt = st.selectbox("Yoqilg'i turi", ["Benzin","Gaz","Elektr"])
 
    if ftt=="Benzin":
@@ -135,13 +135,10 @@ elif menu == "Avtomobil narxlash":
          'fuelType': ft,
          'engineSize': sp
       }]) 
-      df['year'] = encoder.fit_transform(df['year'].values)
-      df['engineSize'] = encoder.fit_transform(df['engineSize'].values)
-      df['mileage'] = encoder.fit_transform(df['mileage'].values)
       prediction = model.predict(df)[0]
       st.success(f"{mm} mashinangizning taxminiy narxi: ${prediction:.2f}$ {"$"}")
       
-elif menu == "Kvartira narxlash":
+elif menu == "Noutbokni narxlash":
    st.markdown(
     f"""
     <style>
@@ -152,23 +149,47 @@ elif menu == "Kvartira narxlash":
     """,
     unsafe_allow_html=True
    )
-   with open('uynarx.pkl', 'rb') as f:
-      model = pickle.load(f)
+   with open('laptopprice.pkl', 'rb') as file:
+    model = pickle.load(file)
+    
+   st.title("Noutbook narxi")
+   st.write("Bu dastur sizning kiritgan ma'lumotlaringizga asoslanib noutbokingizni taxminiy narxini bashorat qiladi!")
 
-   st.title("Uy narxini bashorat qilish")
-   bedrooms = st.number_input("Yotoqxonalar soni", min_value=1, step=1)
-   bathrooms = st.number_input("Hammomlar soni", min_value=1.0, step=0.5)
-   sqft_living = st.number_input("Yashash maydoni", min_value=500, step=50)
-   floors = st.number_input("Qavatlar soni", min_value=1.0, step=0.5)
-   yr_built = st.number_input("Qurilgan yili", min_value=1900, max_value=2023, step=1)
+   mm = st.text_input("Noutbok nomi")
+   PrimaryStorageType = st.selectbox("Hotira turi", ["SSD", "HDD",	"Flash Storage", "Hybrid"])
+   if PrimaryStorageType=="SSD":
+      PrimaryStorageType=3
+   elif PrimaryStorageType=="HDD":
+      PrimaryStorageType=1
+   elif PrimaryStorageType=="Flash Storage":
+      PrimaryStorageType=0
+   elif PrimaryStorageType=="Hybrid":
+      PrimaryStorageType=2
+   PrimaryStorage = st.number_input("Hotira (GB)", step=1)
+   ram = st.number_input("RAM", step=1)
+   Screen = st.selectbox("Ekran sifati", ["Full HD", "Standard", "4K Ultra HD", "Quad HD+"])
+   if Screen=="Full HD":
+      Screen=1
+   elif Screen=="Standard":
+      Screen=3
+   elif Screen=="4K Ultra HD":
+      Screen=0
+   elif Screen=="Quad HD+":
+      Screen=2
+   ScreenW = st.number_input("Ekran kengligi (piksel)", step=1)
+   ScreenH = st.number_input("Ekran balandligi (piksel)", step=1)
+   CPU_freq = st.number_input("Markaziy protsessor (CPU) tezligi")
 
-   if st.button("Narxni bashorat qilish"):
-      input_data = pd.DataFrame({
-         'bedrooms': [bedrooms],
-         'bathrooms': [bathrooms],
-         'sqft_living': [sqft_living],
-         'floors': [floors],
-         'yr_built': [yr_built]
-      })
-      prediction = model.predict(input_data)
-      st.success(f"Bashorat qilingan narx: ${prediction[0]:,.2f}")
+      
+   if st.button("Bashorat qilish"):
+      df =pd.DataFrame([{
+         'Ram': ram,
+         'Screen': Screen,
+         'ScreenW': ScreenW,
+         'ScreenH': ScreenH,
+         'CPU_freq': CPU_freq,
+         'PrimaryStorage': PrimaryStorage,
+         'PrimaryStorageType': PrimaryStorageType
+      }]) 
+      prediction = model.predict(df)[0]
+      st.success(f"{mm} noutbokingizni taxminiy narxi: ${prediction:.2f}$ {"$"}")
